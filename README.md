@@ -1,1 +1,4 @@
 # go_concurrent_learn
+go言語を用いた並行処理について学ぶために書いたコードをpushするためのリポジトリ
+以下のサイトを参考にいろいろ勉強したい
+https://qiita.com/tenntenn/items/0e33a4959250d1a55045
