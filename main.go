@@ -20,7 +20,3 @@ func main() {
 	wg.Wait()
 }
 
-// func sayHello() {
-// 	fmt.Println("hello!")
-// }
-
