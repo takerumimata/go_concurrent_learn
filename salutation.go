@@ -1,0 +1,21 @@
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func main() {
+	//go sayHello()
+	// 他の処理を続ける
+	var wg sync.WaitGroup
+	salutation := "hello!"
+	wg.Add(1)
+	// {}の後ろに()をつけるのは無名関数だからだよ
+	go func() {
+		defer wg.Done()
+		salutation = "welcome" // salutationの値を変更！
+	}()
+	wg.Wait()
+	fmt.Println("salutation")
+}
