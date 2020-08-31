@@ -1,3 +1,5 @@
+// ゴルーチン生成前後でのメモリ消費量を計測する
+
 package main
 
 import (
@@ -19,7 +21,6 @@ func main() {
 	wg.Wait()
 	fmt.Println("salutation")
 }
-
 
 /*
 このプログラムを実行すると、welcomeとコマンドラインに表示される。
