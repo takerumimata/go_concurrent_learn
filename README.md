@@ -39,3 +39,29 @@ go sayHello()
 - まとめる方法
   
 などで、使う分にはこれで使える。
+
+# syncパッケージ
+同期のためのコーディングについて学ぶ。syncパッケージには低水準のメモリアクセス同期に関する並行処理のためのプリミティブが詰まっている。
+
+## WaitGroup
+並行処理を行う上で、複数のタスクでその結果を気にしない、あるいは他に結果を収集する手段がある場合、それらの処理の合流地点として利用するのに使う。
+```go
+var wg sync.WaitGroup
+
+wg.Add(1)
+go func() {
+    defer wg.Done()
+    fmt.Println("1st goroutin sleeeping...")
+    time.Sleep(1)
+}
+
+wg.Add(1)
+go func() {
+    defer wg.Done()
+    fmt.Println("2nd goroutin sleeping...")
+    time.Sleep(2)
+}
+
+wg.Wait()
+fmt.Println("All goroutin complete!!")
+```
