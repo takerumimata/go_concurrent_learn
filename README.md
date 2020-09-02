@@ -21,7 +21,15 @@ func sayHello() {
 無名関数でも同様に起動することが可能。
 ```
 go func() {
-    fmt.Println("hello!)
+    fmt.Println("hello!")
 } () // 即値で実行するので()を後ろにつける
+// 他の処理を続ける
+```
+他にも、変数に関数を代入することでも同様の処理が可能
+```
+sayHello := func() {
+    fmt.Println("hello")
+}
+go sayHello()
 // 他の処理を続ける
 ```
