@@ -53,15 +53,17 @@ go func() {
     defer wg.Done()
     fmt.Println("1st goroutin sleeeping...")
     time.Sleep(1)
-}
+} ()
 
 wg.Add(1)
 go func() {
     defer wg.Done()
     fmt.Println("2nd goroutin sleeping...")
     time.Sleep(2)
-}
+} ()
 
 wg.Wait()
 fmt.Println("All goroutin complete!!")
 ```
+基本的には、goroutineの起動前にAdd(1)、goroutineの終了前にDone()、同期待ちにWait()をかく。  
+deferは上位ブロックの関数がreturnされるまで関数の実行を遅らせる。つまり上の例では、無名関数がreturnされるまで実行されない。これによって無名関数2つが並行処理を行うようになる。  
