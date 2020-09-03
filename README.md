@@ -48,7 +48,7 @@ go sayHello()
 - Once
 - Pool
 
-## WaitGroup
+## WaitGroup: 合流地点を作る
 並行処理を行う上で、複数のタスクでその結果を気にしない、あるいは他に結果を収集する手段がある場合、それらの処理の合流地点として利用するのに使う。
 ```go
 var wg sync.WaitGroup
@@ -73,6 +73,45 @@ fmt.Println("All goroutin complete!!")
 基本的には、goroutineの起動前にAdd(1)、goroutineの終了前にDone()、同期待ちにWait()をかく。  
 deferは上位ブロックの関数がreturnされるまで関数の実行を遅らせる。つまり上の例では、無名関数がreturnされるまで実行されない。これによって無名関数2つが並行処理を行うようになる。  
 
+## Mutex(RWMutex): データをロックする
+クリティカルセクションを作ると聞いて、ピンと来るだろうか。OSが排他制御を行う際に利用している仕組みとしてMutexやセマフォがある。平たく言うと、ある変数（あるいは任意のデータ）へのアクセス権を占有することで、他の処理が今扱っているデータを改変してしまわない（読み込むことも禁止することもできる）ことを保証する仕組みである。データを利用する際にデータをlockし、処理が終わればunlockする。基本的な概念はこれだけである。  
+A tour of Goよりコードを拝借する。
+```go
+// SafeCounter is safe to use concurrently.
+type SafeCounter struct {
+	mu sync.Mutex
+	v  map[string]int
+}
+
+// Inc increments the counter for the given key.
+func (c *SafeCounter) Inc(key string) {
+	c.mu.Lock()
+	// Lock so only one goroutine at a time can access the map c.v.
+	c.v[key]++
+	c.mu.Unlock()
+}
+
+// Value returns the current value of the counter for the given key.
+func (c *SafeCounter) Value(key string) int {
+	c.mu.Lock()
+	// Lock so only one goroutine at a time can access the map c.v.
+	defer c.mu.Unlock()
+	return c.v[key]
+}
+
+func main() {
+	c := SafeCounter{v: make(map[string]int)}
+	for i := 0; i < 1000; i++ {
+		go c.Inc("somekey")
+	}
+
+	time.Sleep(time.Second)
+	fmt.Println(c.Value("somekey"))
+}
+```
+構造体をまず定義し、mutexの機構と連想配列を用意している。goroutinとして走らせるインクリメントだけを行う単純な関数Incと、配列に格納されている値を参照し返すValue関数を定義し、それぞれ処理を走らせる時にmutexを利用しメモリへのアクセスを制限している。  
+以下のサイトで実際に実行してみると、valueとして1000が返ってくることがわかる。  
+https://go-tour-jp.appspot.com/concurrency/9
 - - - 
 # チャネル(channel)
 チャネルを使うときは値をchan型の変数に渡し、プログラムの別の場所からその値を読み込む。
