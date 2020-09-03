@@ -72,3 +72,7 @@ fmt.Println("All goroutin complete!!")
 ```
 基本的には、goroutineの起動前にAdd(1)、goroutineの終了前にDone()、同期待ちにWait()をかく。  
 deferは上位ブロックの関数がreturnされるまで関数の実行を遅らせる。つまり上の例では、無名関数がreturnされるまで実行されない。これによって無名関数2つが並行処理を行うようになる。  
+
+- - - 
+# チャネル(channel)
+チャネルを使うときは値をchan型の変数に渡し、プログラムの別の場所からその値を読み込む。
