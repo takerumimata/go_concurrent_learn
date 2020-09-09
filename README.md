@@ -134,7 +134,39 @@ c := sync.NewCond(&sync.Mutex{})
 ```
 
 ## Once: 一度だけしか実行されないようにする型
+以下のコードはなんと出力として１を返す
+```go
+package main
 
+import (
+	"fmt"
+	"sync"
+)
+
+func main() {
+	var count int
+
+	increment := func() {
+		count++
+	}
+
+	var once sync.Once
+
+	var increments sync.WaitGroup
+	increments.Add(100)
+	for i := 0; i < 100; i++ {
+		go func() {
+			defer increments.Done()
+			once.Do(increment)
+		}()
+	}
+
+	increments.Wait()
+	fmt.Printf("Count is %d\n", count)
+}
+
+```
+今まで見てきたsyncパッケージのWaitGroupを用いて合流点を作っている。並行的に100個のgoルーティンが走って合流地点でうまくまとまっているように思える。しかし、Once.Doがそれを妨げている。このOnceは型として定義されていて、たった一度しか実行されないことを保証している。したがってincrement関数は一度しか実行されず、出力は１となる。
 ## Pool: オブジェクトプールパターン
 メモ：ちょっと難しい
 
